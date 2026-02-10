@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Рулетка DOTA 1X6</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle at center, #111827 0%, #020617 70%);
+  color: white;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  box-sizing: border-box;
+}
+
+h1 {
+  font-size: 42px;
+  text-align: center;
+  margin-bottom: 40px;
+  text-shadow: 0 0 20px rgba(255,215,0,0.5);
+}
+
+/* ── История в правом верхнем углу, фиксированная ── */
+.history-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 340px;
+  max-height: 85vh;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  z-index: 100;
+  overflow-y: auto;
+}
+
+.history-panel h3 {
+  margin: 0 0 14px 0;
+  text-align: center;
+  font-size: 1.35em;
+  color: #facc15;
+}
+
+#historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-item {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.07);
+  font-size: 14px;
+  line-height: 1.45;
+  word-break: break-word;
+  transition: background 0.3s;
+}
+
+.history-item.green {
+  background: rgba(34,197,94,0.22);
+}
+
+.history-item.red {
+  background: rgba(239,68,68,0.22);
+}
+
+.history-time {
+  font-size: 0.82em;
+  opacity: 0.65;
+  margin-bottom: 4px;
+  color: #94a3b8;
+}
+
+.history-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.history-actions button {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.history-actions .check {
+  background: rgba(34,197,94,0.4);
+  color: #22c55e;
+}
+
+.history-actions .cross {
+  background: rgba(239,68,68,0.4);
+  color: #ef4444;
+}
+
+.history-actions button:hover {
+  transform: scale(1.12);
+  opacity: 0.92;
+}
+
+/* ── Рулетка по центру ── */
+.roulette-side {
+  text-align: center;
+  margin: 0 auto;
+  max-width: 500px;
+}
+
+.wheel-wrapper {
+  position: relative;
+  width: 420px;
+  height: 420px;
+  margin: 30px auto;
+}
+
+.wheel {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 12px solid #d4af37;
+  background: conic-gradient(
+    #b91c1c 0deg 30deg, #166534 30deg 60deg,
+    #b91c1c 60deg 90deg, #166534 90deg 120deg,
+    #b91c1c 120deg 150deg, #166534 150deg 180deg,
+    #b91c1c 180deg 210deg, #166534 210deg 240deg,
+    #b91c1c 240deg 270deg, #166534 270deg 300deg,
+    #b91c1c 300deg 330deg, #166534 330deg 360deg
+  );
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 40px rgba(212,175,55,0.6);
+  transition: transform 0.8s cubic-bezier(.2,.8,.2,1);
+}
+
+.wheel-center {
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  background: radial-gradient(circle, #fbbf24, #b45309);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  box-shadow: 0 0 30px rgba(251,191,36,0.9);
+}
+
+.pointer {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 18px solid transparent;
+  border-right: 18px solid transparent;
+  border-top: 45px solid #facc15;
+  filter: drop-shadow(0 0 10px gold);
+}
+
+#result {
+  font-size: 24px;
+  min-height: 130px;
+  margin: 20px 0 30px;
+  padding: 18px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+button {
+  background: linear-gradient(180deg, #facc15, #ca8a04);
+  border: none;
+  color: black;
+  padding: 18px 60px;
+  font-size: 22px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.25s;
+  font-weight: bold;
+  box-shadow: 0 0 25px rgba(250,204,21,0.6);
+}
+
+button:hover {
+  transform: scale(1.07);
+  box-shadow: 0 0 45px rgba(250,204,21,0.9);
+}
+
+/* Мобильная версия — история опускается вниз */
+@media (max-width: 980px) {
+  .history-panel {
+    position: static;
+    width: 100%;
+    max-width: 500px;
+    margin: 30px auto 0;
+    top: auto;
+    right: auto;
+  }
+  .wheel-wrapper {
+    width: 360px;
+    height: 360px;
+  }
+  .container {
+    padding: 20px 15px;
+  }
+}
+
+.admin-panel {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 360px;
+  background: rgba(15,23,42,0.98);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+  display: none;
+  z-index: 999;
+}
+
+textarea {
+  width: 100%;
+  height: 160px;
+  border-radius: 12px;
+  border: none;
+  padding: 12px;
+  margin: 12px 0;
+  background: rgba(255,255,255,0.08);
+  color: white;
+  resize: vertical;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🎰 Рулетка DOTA 1X6</h1>
+
+  <div class="roulette-side">
+    <div class="wheel-wrapper">
+      <div class="pointer"></div>
+      <div class="wheel" id="wheel"></div>
+      <div class="wheel-center">🎲</div>
+    </div>
+    <div id="result">Нажми кнопку чтобы испытать удачу</div>
+    <button onclick="spin()">КРУТИТЬ</button>
+  </div>
+</div>
+
+<!-- Фиксированная история в правом верхнем углу -->
+<div class="history-panel">
+  <h3>📜 История выпадений</h3>
+  <div id="historyList"></div>
+</div>
+
+<div class="admin-panel" id="adminPanel">
+  <h3>Редактор условий</h3>
+  <textarea id="conditionsInput"></textarea>
+  <div style="margin-top: 16px; text-align: right;">
+    <button onclick="saveConditions()">Сохранить</button>
+    <button onclick="toggleAdmin(false)" style="margin-left: 12px;">Закрыть</button>
+  </div>
+</div>
+
+<script>
+let conditions = [
+"3 Игры подряд на одном герое из старой системы",
+"Не подбирать сферы до выпадения легендарки",
+"Первая шмотка после ботинка (грейженная версия ботинка разрешена) — муншард",
+"Катка без вардов",
+"Игра на рандом герое с легендаркой W (2 скилл)",
+"Не качать 1 скилл до легендарки",
+"С нулевой минуты идти гангать до выпадения легендарки, не бить крипов кроме вейвов",
+"Игра на рандом герое с легендаркой Q (1 скилл)",
+"Игра на рандом герое с легендаркой E (3 скилл)",
+"Игра на рандом герое с легендаркой R (ультимейт)",
+"Фаст блинк даггер без сапога",
+"После ботинка (грейженная версия ботинка разрешена) фаст дагон 5",
+"Игнорирование рун и наблюдателей",
+"Катка без Aghanim shard",
+"Катка без Aghanim Scepter (включая Aghanim Essence)",
+"Фаст бф после ботинка (грейженная версия ботинка разрешена)",
+"После ботинка (грейженная версия ботинка разрешена) фаст дагон 5",
+"Стартовый закуп дасты на все деньги",
+"Каждый раз выбирать только самый правый талант (сохраняя редкость сферы)"
+];
+
+const wheel = document.getElementById("wheel");
+const result = document.getElementById("result");
+const historyList = document.getElementById("historyList");
+const textarea = document.getElementById("conditionsInput");
+const adminPanel = document.getElementById("adminPanel");
+
+textarea.value = conditions.join("\n");
+
+let currentRotation = 0;
+
+function spin() {
+  const randomIndex = Math.floor(Math.random() * conditions.length);
+  const spinRotation = 720 + Math.random() * 1080;
+  currentRotation += spinRotation;
+  wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+  result.textContent = "Крутим...";
+  playRouletteSound();
+
+  setTimeout(() => {
+    const text = conditions[randomIndex];
+    result.textContent = text;
+    addToHistory(text);
+  }, 1400);
+}
+
+function addToHistory(text) {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+  const item = document.createElement("div");
+  item.className = "history-item";
+
+  const timeEl = document.createElement("div");
+  timeEl.className = "history-time";
+  timeEl.textContent = timeStr;
+
+  const textEl = document.createElement("div");
+  textEl.textContent = "• " + text;
+
+  const actions = document.createElement("div");
+  actions.className = "history-actions";
+
+  const checkBtn = document.createElement("button");
+  checkBtn.className = "check";
+  checkBtn.textContent = "✓";
+  checkBtn.title = "Выполнено / Успех";
+  checkBtn.onclick = () => {
+    item.classList.remove("red");
+    item.classList.toggle("green");
+  };
+
+  const crossBtn = document.createElement("button");
+  crossBtn.className = "cross";
+  crossBtn.textContent = "✗";
+  crossBtn.title = "Не выполнено / Провал";
+  crossBtn.onclick = () => {
+    item.classList.remove("green");
+    item.classList.toggle("red");
+  };
+
+  actions.append(checkBtn, crossBtn);
+
+  item.append(timeEl, textEl, actions);
+  historyList.prepend(item);
+}
+
+function saveConditions() {
+  const lines = textarea.value.split("\n").map(v => v.trim()).filter(v => v);
+  if (lines.length) {
+    conditions = lines;
+    alert("Список условий обновлён");
+  }
+}
+
+function playRouletteSound() {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  let time = ctx.currentTime;
+  for (let i = 0; i < 18; i++) {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "triangle";
+    osc.frequency.value = 140 + Math.random() * 60;
+    gain.gain.setValueAtTime(0.2, time);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.07);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(time);
+    osc.stop(time + 0.07);
+    time += 0.045;
+  }
+}
+
+function toggleAdmin(show) {
+  adminPanel.style.display = show ? "block" : "none";
+}
+
+let adminHoldTimer = null;
+document.addEventListener("keydown", (e) => {
+  if (e.key.toLowerCase() === "a" && !adminHoldTimer) {
+    adminHoldTimer = setTimeout(() => toggleAdmin(true), 1200);
+  }
+});
+document.addEventListener("keyup", (e) => {
+  if (e.key.toLowerCase() === "a") {
+    clearTimeout(adminHoldTimer);
+    adminHoldTimer = null;
+  }
+});
+</script>
+</body>
+</html>
