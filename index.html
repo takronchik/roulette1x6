@@ -25,7 +25,7 @@ h1 {
   text-shadow: 0 0 20px rgba(255,215,0,0.5);
 }
 
-/* История справа сверху */
+/* История */
 .history-panel {
   position: fixed;
   top: 20px;
@@ -41,7 +41,8 @@ h1 {
   overflow-y: auto;
 }
 .history-panel h3 {
-  margin: 0;
+  margin: 0 0 14px 0;
+  text-align: center;
   font-size: 1.35em;
   color: #facc15;
 }
@@ -58,6 +59,10 @@ h1 {
   line-height: 1.45;
   word-break: break-word;
   transition: background 0.3s;
+  cursor: pointer;
+}
+.history-item:hover {
+  background: rgba(255,255,255,0.12);
 }
 .history-item.green { background: rgba(34,197,94,0.22); }
 .history-item.red   { background: rgba(239,68,68,0.22); }
@@ -96,106 +101,44 @@ h1 {
   opacity: 0.92;
 }
 
-/* Рулетка */
-.roulette-side {
-  text-align: center;
-  margin: 0 auto;
-  max-width: 500px;
+/* Заметка внутри карточки */
+.history-note-view {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: rgba(0,0,0,0.25);
+  border-radius: 8px;
+  font-size: 0.9em;
+  white-space: pre-wrap;
 }
-.wheel-wrapper {
-  position: relative;
-  width: 420px;
-  height: 420px;
-  margin: 30px auto;
-}
-.wheel {
+
+.history-note-edit textarea {
   width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 12px solid #d4af37;
-  background: conic-gradient(
-    #b91c1c 0deg 30deg, #166534 30deg 60deg, #b91c1c 60deg 90deg, #166534 90deg 120deg,
-    #b91c1c 120deg 150deg, #166534 150deg 180deg, #b91c1c 180deg 210deg, #166534 210deg 240deg,
-    #b91c1c 240deg 270deg, #166534 270deg 300deg, #b91c1c 300deg 330deg, #166534 330deg 360deg
-  );
-  box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 40px rgba(212,175,55,0.6);
-  transition: transform 0.8s cubic-bezier(.2,.8,.2,1);
+  min-height: 80px;
+  margin-top: 10px;
+  padding: 8px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid #4b5563;
+  border-radius: 6px;
+  color: white;
+  resize: vertical;
+  font-family: inherit;
 }
-.wheel-center {
-  position: absolute;
-  width: 110px;
-  height: 110px;
-  background: radial-gradient(circle, #fbbf24, #b45309);
-  border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 34px;
-  box-shadow: 0 0 30px rgba(251,191,36,0.9);
-}
-.pointer {
-  position: absolute;
-  top: -30px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 18px solid transparent;
-  border-right: 18px solid transparent;
-  border-top: 45px solid #facc15;
-  filter: drop-shadow(0 0 10px gold);
-}
-#result {
-  font-size: 24px;
-  min-height: 130px;
-  margin: 20px 0 30px;
-  padding: 18px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(6px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  box-sizing: border-box;
-}
-button {
-  background: linear-gradient(180deg, #facc15, #ca8a04);
-  border: none;
-  color: black;
-  padding: 18px 60px;
-  font-size: 22px;
-  border-radius: 14px;
-  cursor: pointer;
-  transition: all 0.25s;
-  font-weight: bold;
-  box-shadow: 0 0 25px rgba(250,204,21,0.6);
-}
-button:hover {
-  transform: scale(1.07);
-  box-shadow: 0 0 45px rgba(250,204,21,0.9);
-}
+
+/* Рулетка (остальное без изменений) */
+.roulette-side { text-align: center; margin: 0 auto; max-width: 500px; }
+.wheel-wrapper { position: relative; width: 420px; height: 420px; margin: 30px auto; }
+.wheel { width: 100%; height: 100%; border-radius: 50%; border: 12px solid #d4af37; background: conic-gradient(#b91c1c 0deg 30deg, #166534 30deg 60deg, #b91c1c 60deg 90deg, #166534 90deg 120deg, #b91c1c 120deg 150deg, #166534 150deg 180deg, #b91c1c 180deg 210deg, #166534 210deg 240deg, #b91c1c 240deg 270deg, #166534 270deg 300deg, #b91c1c 300deg 330deg, #166534 330deg 360deg); box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 40px rgba(212,175,55,0.6); transition: transform 0.8s cubic-bezier(.2,.8,.2,1); }
+.wheel-center { position: absolute; width: 110px; height: 110px; background: radial-gradient(circle, #fbbf24, #b45309); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; font-size: 34px; box-shadow: 0 0 30px rgba(251,191,36,0.9); }
+.pointer { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent; border-top: 45px solid #facc15; filter: drop-shadow(0 0 10px gold); }
+#result { font-size: 24px; min-height: 130px; margin: 20px 0 30px; padding: 18px; border-radius: 14px; background: rgba(255,255,255,0.06); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; text-align: center; box-sizing: border-box; }
+button { background: linear-gradient(180deg, #facc15, #ca8a04); border: none; color: black; padding: 18px 60px; font-size: 22px; border-radius: 14px; cursor: pointer; transition: all 0.25s; font-weight: bold; box-shadow: 0 0 25px rgba(250,204,21,0.6); }
+button:hover { transform: scale(1.07); box-shadow: 0 0 45px rgba(250,204,21,0.9); }
 
 /* Мобильная адаптация */
 @media (max-width: 980px) {
-  .history-panel {
-    position: static;
-    width: 100%;
-    max-width: 500px;
-    margin: 30px auto 0;
-    top: auto;
-    right: auto;
-  }
-  .wheel-wrapper {
-    width: 360px;
-    height: 360px;
-  }
-  .container {
-    padding: 20px 15px;
-  }
+  .history-panel { position: static; width: 100%; max-width: 500px; margin: 30px auto 0; top: auto; right: auto; }
+  .wheel-wrapper { width: 360px; height: 360px; }
+  .container { padding: 20px 15px; }
 }
 
 /* Админка */
@@ -211,19 +154,9 @@ button:hover {
   display: none;
   z-index: 999;
 }
-textarea {
-  width: 100%;
-  height: 160px;
-  border-radius: 12px;
-  border: none;
-  padding: 12px;
-  margin: 12px 0;
-  background: rgba(255,255,255,0.08);
-  color: white;
-  resize: vertical;
-}
+textarea { width: 100%; height: 160px; border-radius: 12px; border: none; padding: 12px; margin: 12px 0; background: rgba(255,255,255,0.08); color: white; resize: vertical; }
 
-/* Кнопка урны */
+/* Урна */
 .trash-btn {
   width: 28px;
   height: 28px;
@@ -274,7 +207,7 @@ textarea {
 <div class="admin-panel" id="adminPanel">
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
     <h3 style="margin: 0;">Редактор условий</h3>
-    <button class="trash-btn" onclick="resetConditionsToDefault()" title="Сбросить условия к базовым">🗑</button>
+    <button class="trash-btn" onclick="resetConditionsToDefault()" title="Сбросить к базовым">🗑</button>
   </div>
   <textarea id="conditionsInput"></textarea>
   <div style="margin-top: 16px; text-align: right;">
@@ -314,37 +247,20 @@ const adminPanel = document.getElementById("adminPanel");
 
 let conditions = [];
 
-// Загрузка условий
+// Условия
 function loadConditions() {
   const saved = localStorage.getItem('rouletteConditions');
-  if (saved) {
-    try {
-      conditions = JSON.parse(saved);
-      if (!Array.isArray(conditions) || conditions.length === 0) {
-        conditions = [...DEFAULT_CONDITIONS];
-      }
-    } catch {
-      conditions = [...DEFAULT_CONDITIONS];
-    }
-  } else {
-    conditions = [...DEFAULT_CONDITIONS];
-  }
+  conditions = saved ? JSON.parse(saved) : [...DEFAULT_CONDITIONS];
+  if (!Array.isArray(conditions) || conditions.length === 0) conditions = [...DEFAULT_CONDITIONS];
   textarea.value = conditions.join("\n");
 }
-
-function saveConditionsToStorage() {
-  localStorage.setItem('rouletteConditions', JSON.stringify(conditions));
-}
-
+function saveConditionsToStorage() { localStorage.setItem('rouletteConditions', JSON.stringify(conditions)); }
 loadConditions();
 
 let currentRotation = 0;
 
 function spin() {
-  if (conditions.length === 0) {
-    result.textContent = "Список условий пуст!";
-    return;
-  }
+  if (conditions.length === 0) return result.textContent = "Список условий пуст!";
   const randomIndex = Math.floor(Math.random() * conditions.length);
   const spinRotation = 720 + Math.random() * 1080;
   currentRotation += spinRotation;
@@ -360,64 +276,89 @@ function spin() {
 
 function addToHistory(text) {
   const now = new Date();
-  const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-  const dateStr = now.toLocaleDateString('ru-RU', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  }).replace(/\./g, '.');
+  const dateStr = now.toLocaleDateString('ru-RU', {day:'2-digit', month:'2-digit', year:'numeric'});
+  const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
 
   const item = document.createElement("div");
   item.className = "history-item";
+  item.dataset.note = "";
 
-  const timeEl = document.createElement("div");
-  timeEl.className = "history-time";
-  timeEl.textContent = `${dateStr} ${timeStr}`;
+  item.innerHTML = `
+    <div class="history-time">${dateStr} ${timeStr}</div>
+    <div>• ${text}</div>
+    <div class="history-note-view" style="display:none;"></div>
+    <div class="history-actions">
+      <button class="check" title="Выполнено / Успех">✓</button>
+      <button class="cross" title="Не выполнено / Провал">✗</button>
+    </div>
+  `;
 
-  const textEl = document.createElement("div");
-  textEl.textContent = "• " + text;
+  const checkBtn = item.querySelector(".check");
+  const crossBtn = item.querySelector(".cross");
 
-  const actions = document.createElement("div");
-  actions.className = "history-actions";
-
-  const checkBtn = document.createElement("button");
-  checkBtn.className = "check";
-  checkBtn.textContent = "✓";
-  checkBtn.title = "Выполнено / Успех";
-  checkBtn.onclick = () => {
+  checkBtn.onclick = e => {
+    e.stopPropagation();
     item.classList.remove("red");
     item.classList.toggle("green");
     saveHistory();
   };
 
-  const crossBtn = document.createElement("button");
-  crossBtn.className = "cross";
-  crossBtn.textContent = "✗";
-  crossBtn.title = "Не выполнено / Провал";
-  crossBtn.onclick = () => {
+  crossBtn.onclick = e => {
+    e.stopPropagation();
     item.classList.remove("green");
     item.classList.toggle("red");
     saveHistory();
   };
 
-  actions.append(checkBtn, crossBtn);
-  item.append(timeEl, textEl, actions);
+  item.onclick = e => {
+    if (e.target.tagName === "BUTTON") return;
+    toggleNoteEditor(item);
+  };
 
   historyList.prepend(item);
   saveHistory();
 }
 
+function toggleNoteEditor(item) {
+  let editor = item.querySelector(".history-note-edit");
+  if (editor) {
+    // Сохраняем и закрываем
+    const ta = editor.querySelector("textarea");
+    const note = ta.value.trim();
+    item.dataset.note = note;
+
+    const view = item.querySelector(".history-note-view");
+    if (note) {
+      view.textContent = note;
+      view.style.display = "block";
+    } else {
+      view.style.display = "none";
+    }
+
+    editor.remove();
+  } else {
+    // Открываем редактор
+    editor = document.createElement("div");
+    editor.className = "history-note-edit";
+    editor.innerHTML = `
+      <textarea placeholder="Заметка...">${item.dataset.note || ""}</textarea>
+      <div style="margin-top:8px; text-align:right;">
+        <button style="background:#22c55e; color:white;" onclick="toggleNoteEditor(this.closest('.history-item'))">Сохранить</button>
+      </div>
+    `;
+    item.appendChild(editor);
+    editor.querySelector("textarea").focus();
+  }
+  saveHistory();
+}
+
 function saveHistory() {
-  const items = Array.from(historyList.children).map(item => {
-    const timeEl = item.querySelector('.history-time');
-    const time = timeEl ? timeEl.textContent : "";
-    const textDiv = item.querySelector('div:not(.history-time):not(.history-actions)');
-    const text = textDiv ? textDiv.textContent.replace(/^•\s*/, '') : "";
-    let cls = "";
-    if (item.classList.contains("green")) cls = "green";
-    else if (item.classList.contains("red")) cls = "red";
-    return { time, text, class: cls };
-  });
+  const items = Array.from(historyList.children).map(item => ({
+    time: item.querySelector('.history-time')?.textContent || "",
+    text: item.querySelector('div:not(.history-time):not(.history-actions):not(.history-note-view):not(.history-note-edit)')?.textContent.replace(/^•\s*/, '') || "",
+    class: item.classList.contains("green") ? "green" : item.classList.contains("red") ? "red" : "",
+    note: item.dataset.note || ""
+  }));
   localStorage.setItem('rouletteHistory', JSON.stringify(items));
 }
 
@@ -429,39 +370,40 @@ function loadHistory() {
     items.forEach(data => {
       const item = document.createElement("div");
       item.className = "history-item" + (data.class ? " " + data.class : "");
+      item.dataset.note = data.note || "";
 
-      const timeEl = document.createElement("div");
-      timeEl.className = "history-time";
-      timeEl.textContent = data.time;
+      item.innerHTML = `
+        <div class="history-time">${data.time}</div>
+        <div>• ${data.text}</div>
+        <div class="history-note-view" style="${data.note ? '' : 'display:none;'}">${data.note || ""}</div>
+        <div class="history-actions">
+          <button class="check" title="Выполнено / Успех">✓</button>
+          <button class="cross" title="Не выполнено / Провал">✗</button>
+        </div>
+      `;
 
-      const textEl = document.createElement("div");
-      textEl.textContent = "• " + data.text;
+      const checkBtn = item.querySelector(".check");
+      const crossBtn = item.querySelector(".cross");
 
-      const actions = document.createElement("div");
-      actions.className = "history-actions";
-
-      const checkBtn = document.createElement("button");
-      checkBtn.className = "check";
-      checkBtn.textContent = "✓";
-      checkBtn.title = "Выполнено / Успех";
-      checkBtn.onclick = () => {
+      checkBtn.onclick = e => {
+        e.stopPropagation();
         item.classList.remove("red");
         item.classList.toggle("green");
         saveHistory();
       };
 
-      const crossBtn = document.createElement("button");
-      crossBtn.className = "cross";
-      crossBtn.textContent = "✗";
-      crossBtn.title = "Не выполнено / Провал";
-      crossBtn.onclick = () => {
+      crossBtn.onclick = e => {
+        e.stopPropagation();
         item.classList.remove("green");
         item.classList.toggle("red");
         saveHistory();
       };
 
-      actions.append(checkBtn, crossBtn);
-      item.append(timeEl, textEl, actions);
+      item.onclick = e => {
+        if (e.target.tagName === "BUTTON") return;
+        toggleNoteEditor(item);
+      };
+
       historyList.appendChild(item);
     });
   } catch (e) {
