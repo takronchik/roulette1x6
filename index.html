@@ -223,7 +223,7 @@ textarea {
   resize: vertical;
 }
 
-/* Стили для кнопки-урны */
+/* Кнопка урны */
 .trash-btn {
   width: 28px;
   height: 28px;
@@ -272,7 +272,10 @@ textarea {
 </div>
 
 <div class="admin-panel" id="adminPanel">
-  <h3>Редактор условий</h3>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+    <h3 style="margin: 0;">Редактор условий</h3>
+    <button class="trash-btn" onclick="resetConditionsToDefault()" title="Сбросить условия к базовым">🗑</button>
+  </div>
   <textarea id="conditionsInput"></textarea>
   <div style="margin-top: 16px; text-align: right;">
     <button onclick="saveConditions()">Сохранить</button>
@@ -281,7 +284,7 @@ textarea {
 </div>
 
 <script>
-let conditions = [
+const DEFAULT_CONDITIONS = [
   "3 Игры подряд на одном герое из старой системы",
   "Не подбирать сферы до выпадения легендарки",
   "Первая шмотка после ботинка (грейженная версия ботинка разрешена) — муншард",
@@ -309,11 +312,39 @@ const historyList = document.getElementById("historyList");
 const textarea = document.getElementById("conditionsInput");
 const adminPanel = document.getElementById("adminPanel");
 
-textarea.value = conditions.join("\n");
+let conditions = [];
+
+// Загрузка условий
+function loadConditions() {
+  const saved = localStorage.getItem('rouletteConditions');
+  if (saved) {
+    try {
+      conditions = JSON.parse(saved);
+      if (!Array.isArray(conditions) || conditions.length === 0) {
+        conditions = [...DEFAULT_CONDITIONS];
+      }
+    } catch {
+      conditions = [...DEFAULT_CONDITIONS];
+    }
+  } else {
+    conditions = [...DEFAULT_CONDITIONS];
+  }
+  textarea.value = conditions.join("\n");
+}
+
+function saveConditionsToStorage() {
+  localStorage.setItem('rouletteConditions', JSON.stringify(conditions));
+}
+
+loadConditions();
 
 let currentRotation = 0;
 
 function spin() {
+  if (conditions.length === 0) {
+    result.textContent = "Список условий пуст!";
+    return;
+  }
   const randomIndex = Math.floor(Math.random() * conditions.length);
   const spinRotation = 720 + Math.random() * 1080;
   currentRotation += spinRotation;
@@ -330,13 +361,18 @@ function spin() {
 function addToHistory(text) {
   const now = new Date();
   const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  const dateStr = now.toLocaleDateString('ru-RU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  }).replace(/\./g, '.');
 
   const item = document.createElement("div");
   item.className = "history-item";
 
   const timeEl = document.createElement("div");
   timeEl.className = "history-time";
-  timeEl.textContent = timeStr;
+  timeEl.textContent = `${dateStr} ${timeStr}`;
 
   const textEl = document.createElement("div");
   textEl.textContent = "• " + text;
@@ -373,7 +409,8 @@ function addToHistory(text) {
 
 function saveHistory() {
   const items = Array.from(historyList.children).map(item => {
-    const time = item.querySelector('.history-time')?.textContent || "";
+    const timeEl = item.querySelector('.history-time');
+    const time = timeEl ? timeEl.textContent : "";
     const textDiv = item.querySelector('div:not(.history-time):not(.history-actions)');
     const text = textDiv ? textDiv.textContent.replace(/^•\s*/, '') : "";
     let cls = "";
@@ -442,9 +479,20 @@ function clearHistory() {
 
 function saveConditions() {
   const lines = textarea.value.split("\n").map(v => v.trim()).filter(v => v);
-  if (lines.length) {
-    conditions = lines;
-    alert("Список условий обновлён");
+  if (lines.length === 0) {
+    alert("Список не может быть пустым");
+    return;
+  }
+  conditions = lines;
+  saveConditionsToStorage();
+  alert("Список условий обновлён и сохранён");
+}
+
+function resetConditionsToDefault() {
+  if (confirm("Сбросить условия к исходным (базовым)?")) {
+    conditions = [...DEFAULT_CONDITIONS];
+    textarea.value = conditions.join("\n");
+    saveConditionsToStorage();
   }
 }
 
@@ -483,7 +531,7 @@ document.addEventListener("keyup", (e) => {
   }
 });
 
-// Загружаем историю при запуске
+// Инициализация
 loadHistory();
 </script>
 </body>
